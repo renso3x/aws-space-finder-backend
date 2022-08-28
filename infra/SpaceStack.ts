@@ -7,6 +7,7 @@ import { join } from 'path';
 import { GenericTable } from './GenericTable';
 
 import { NodejsFunction, NodejsFunctionProps } from 'aws-cdk-lib/aws-lambda-nodejs'
+import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
 export class SpaceStack extends Stack {
     // reference this in the class
     private api = new RestApi(this, 'SpaceApi')
@@ -33,13 +34,19 @@ export class SpaceStack extends Stack {
             handler: 'hello.main'
         })
 
+        
         // NodeJS Lambda
         const helloLambdaNodeJS = new NodejsFunction(this, 'helloLambdaNodeJS', {
             runtime: Runtime.NODEJS_14_X,
             entry: (join(__dirname, '..', 'services', 'node-lambda', 'hello.ts')),
             ...nodeJsFunctionProps,
         })
+        // Add s3 Policy
+        const s3ListPolicy = new PolicyStatement()
+        s3ListPolicy.addActions('s3:ListAllMyBuckets')
+        s3ListPolicy.addResources('*')
 
+        helloLambdaNodeJS.addToRolePolicy(s3ListPolicy)
 
         // API Gateway Integrate Lambda
         const helloLambdaIntegration = new LambdaIntegration(helloLambda)
