@@ -3,9 +3,11 @@
 GET {{endpoint}}/hello
 ###
 
-GET {{endpoint}}/spaces?spaceId=4eb8368e-fa53-404d-b770-17e39041ef6c
+GET {{endpoint}}/spaces
 ###
 
+GET {{endpoint}}/spaces?spaceId=4eb8368e-fa53-404d-b770-17e39041ef6c
+###
 
 GET {{endpoint}}/spaces?location=Australia
 ###
@@ -16,4 +18,13 @@ Content-Type: application/json
 {
     "location": "Australia",
     "name": "Best for working"
+}
+###
+
+
+PUT {{endpoint}}/spaces?spaceId=252c9ed1-b2d5-45be-a433-5d82338ec4dc
+Content-Type: application/json
+
+{
+    "location": "NSW, Sydney"
 }
