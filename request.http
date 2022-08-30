@@ -6,6 +6,10 @@ GET {{endpoint}}/hello
 GET {{endpoint}}/spaces?spaceId=4eb8368e-fa53-404d-b770-17e39041ef6c
 ###
 
+
+GET {{endpoint}}/spaces?location=Australia
+###
+
 POST {{endpoint}}/spaces
 Content-Type: application/json
 
