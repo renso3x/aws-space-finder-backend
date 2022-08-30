@@ -1,9 +1,9 @@
 require('dotenv').config()
 
-import { v4 } from 'uuid'
 import { DynamoDB } from 'aws-sdk'
 import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'aws-lambda'
 import { MissingFieldError, validateSpaceEntry } from '../Shared/InputValidator'
+import { generateRandomID, getEventBody } from '../Shared/Utils'
 
 const config = {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID, 
@@ -20,8 +20,8 @@ async function handler(event: APIGatewayProxyEvent, context: Context): Promise<A
     }
 
     try {
-        const item = typeof event.body === 'object' ? event.body : JSON.parse(event.body)
-        item.spaceId = v4()
+        const item = getEventBody(event)
+        item.spaceId = generateRandomID()
 
         validateSpaceEntry(item)
 

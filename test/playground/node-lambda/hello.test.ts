@@ -3,7 +3,8 @@ import { handler } from '../../../services/SpacesTable/Create'
 
 const event: APIGatewayProxyEvent = {
     body: {
-        name: 'Test'
+        name: 'Home',
+        location: 'Calamba Park Residences, Calamba, Laguna'
     }
 } as any
 
