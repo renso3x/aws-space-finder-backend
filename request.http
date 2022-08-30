@@ -3,4 +3,10 @@
 GET {{endpoint}}/hello
 ###
 
+POST {{endpoint}}/spaces
+Content-Type: application/json
 
+{
+    "location": "Australia",
+    "name": "Best for working"
+}
