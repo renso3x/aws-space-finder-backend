@@ -1,5 +1,5 @@
 import { Stack, StackProps } from 'aws-cdk-lib'
-import { LambdaIntegration, RestApi } from 'aws-cdk-lib/aws-apigateway';
+import { AuthorizationType, LambdaIntegration, MethodOptions, RestApi } from 'aws-cdk-lib/aws-apigateway';
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import { Code, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
@@ -8,9 +8,15 @@ import { GenericTable } from './GenericTable';
 
 import { NodejsFunction, NodejsFunctionProps } from 'aws-cdk-lib/aws-lambda-nodejs'
 import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
+
+import { AuthorizeWrapper } from './auth/AuthorizeWrapper';
 export class SpaceStack extends Stack {
     // reference this in the class
     private api = new RestApi(this, 'SpaceApi')
+
+    // Cognito
+    private authorizer: AuthorizeWrapper
+
     // Use generic table
     private spacesTable = new GenericTable(this, {
       tableName: 'SpacesTable',
@@ -24,6 +30,8 @@ export class SpaceStack extends Stack {
 
     constructor(scope: Construct, id: string, props: StackProps) {
         super(scope, id, props)
+
+        this.authorizer = new AuthorizeWrapper(this, this.api)
 
         const nodeJsFunctionProps: NodejsFunctionProps = {
             bundling: {
@@ -53,15 +61,21 @@ export class SpaceStack extends Stack {
         const s3ListPolicy = new PolicyStatement()
         s3ListPolicy.addActions('s3:ListAllMyBuckets')
         s3ListPolicy.addResources('*')
-
         helloLambdaNodeJS.addToRolePolicy(s3ListPolicy)
+
+        const optionsWithAuthorizer: MethodOptions = {
+          authorizationType: AuthorizationType.COGNITO,
+          authorizer: {
+            authorizerId: this.authorizer.authorizer.authorizerId,
+          }
+        }
 
         // API Gateway Integrate Lambda
         const helloLambdaIntegration = new LambdaIntegration(helloLambda)
         // Add Resource
         const helloLambdaResource = this.api.root.addResource('hello')
-        // Add The method
-        helloLambdaResource.addMethod('GET', helloLambdaIntegration)
+        // Add The method WITH cognito authorizer
+        helloLambdaResource.addMethod('GET', helloLambdaIntegration, optionsWithAuthorizer)
 
 
         // Sspace API Integration

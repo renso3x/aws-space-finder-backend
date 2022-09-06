@@ -915,7 +915,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "bad271cd956125823a23e1b35a9f4b6773dd1bbee9eeeeba898c662323c79fe1.zip"
+     "S3Key": "e0f9a869b64eaa5e993d07f5008976b65d917c2b92d382af77ccc86e54d7d8d3.zip"
     },
     "Role": {
      "Fn::GetAtt": [
@@ -940,7 +940,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "Space-finder/SpacesTable-Create/Resource",
-    "aws:asset:path": "asset.bad271cd956125823a23e1b35a9f4b6773dd1bbee9eeeeba898c662323c79fe1",
+    "aws:asset:path": "asset.e0f9a869b64eaa5e993d07f5008976b65d917c2b92d382af77ccc86e54d7d8d3",
     "aws:asset:is-bundled": true,
     "aws:asset:property": "Code"
    }
@@ -1162,7 +1162,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "540888f0689ecb8a65647d2028acd46ecb5416e2df8a311fc0034eee23030ff7.zip"
+     "S3Key": "d07803e0a4d2d20ba54171b212d8c0c3bc2b432494c89a76b2f98fc9721849c9.zip"
     },
     "Role": {
      "Fn::GetAtt": [
@@ -1187,7 +1187,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "Space-finder/SpacesTable-Update/Resource",
-    "aws:asset:path": "asset.540888f0689ecb8a65647d2028acd46ecb5416e2df8a311fc0034eee23030ff7",
+    "aws:asset:path": "asset.d07803e0a4d2d20ba54171b212d8c0c3bc2b432494c89a76b2f98fc9721849c9",
     "aws:asset:is-bundled": true,
     "aws:asset:property": "Code"
    }
@@ -1284,7 +1284,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "89cb328f755fcf7b8bf012c7f689638187c4f495d3a56a1bbe0daf9698a8d608.zip"
+     "S3Key": "1f79359ce3eb6eced66396e3d81a065990e089ee181a7a46e9947b0fb82859c3.zip"
     },
     "Role": {
      "Fn::GetAtt": [
@@ -1309,9 +1309,110 @@
    ],
    "Metadata": {
     "aws:cdk:path": "Space-finder/SpacesTable-Delete/Resource",
-    "aws:asset:path": "asset.89cb328f755fcf7b8bf012c7f689638187c4f495d3a56a1bbe0daf9698a8d608",
+    "aws:asset:path": "asset.1f79359ce3eb6eced66396e3d81a065990e089ee181a7a46e9947b0fb82859c3",
     "aws:asset:is-bundled": true,
     "aws:asset:property": "Code"
+   }
+  },
+  "SpaceUserPool6AB542DC": {
+   "Type": "AWS::Cognito::UserPool",
+   "Properties": {
+    "AccountRecoverySetting": {
+     "RecoveryMechanisms": [
+      {
+       "Name": "verified_phone_number",
+       "Priority": 1
+      },
+      {
+       "Name": "verified_email",
+       "Priority": 2
+      }
+     ]
+    },
+    "AdminCreateUserConfig": {
+     "AllowAdminCreateUserOnly": false
+    },
+    "AliasAttributes": [
+     "email"
+    ],
+    "AutoVerifiedAttributes": [
+     "email"
+    ],
+    "EmailVerificationMessage": "The verification code to your new account is {####}",
+    "EmailVerificationSubject": "Verify your new account",
+    "SmsVerificationMessage": "The verification code to your new account is {####}",
+    "UserPoolName": "SpaceUserPool",
+    "VerificationMessageTemplate": {
+     "DefaultEmailOption": "CONFIRM_WITH_CODE",
+     "EmailMessage": "The verification code to your new account is {####}",
+     "EmailSubject": "Verify your new account",
+     "SmsMessage": "The verification code to your new account is {####}"
+    }
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "Space-finder/SpaceUserPool/Resource"
+   }
+  },
+  "SpaceUserPoolSpaceUserPoolclient4839E5E8": {
+   "Type": "AWS::Cognito::UserPoolClient",
+   "Properties": {
+    "UserPoolId": {
+     "Ref": "SpaceUserPool6AB542DC"
+    },
+    "AllowedOAuthFlows": [
+     "implicit",
+     "code"
+    ],
+    "AllowedOAuthFlowsUserPoolClient": true,
+    "AllowedOAuthScopes": [
+     "profile",
+     "phone",
+     "email",
+     "openid",
+     "aws.cognito.signin.user.admin"
+    ],
+    "CallbackURLs": [
+     "https://example.com"
+    ],
+    "ClientName": "SpaceUserPool-client",
+    "ExplicitAuthFlows": [
+     "ALLOW_USER_PASSWORD_AUTH",
+     "ALLOW_ADMIN_USER_PASSWORD_AUTH",
+     "ALLOW_CUSTOM_AUTH",
+     "ALLOW_USER_SRP_AUTH",
+     "ALLOW_REFRESH_TOKEN_AUTH"
+    ],
+    "GenerateSecret": false,
+    "SupportedIdentityProviders": [
+     "COGNITO"
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "Space-finder/SpaceUserPool/SpaceUserPool-client/Resource"
+   }
+  },
+  "SpaceAuthorizer8F94503A": {
+   "Type": "AWS::ApiGateway::Authorizer",
+   "Properties": {
+    "Name": "SpaceAuthorizer",
+    "RestApiId": {
+     "Ref": "SpaceApi1B373D2B"
+    },
+    "Type": "COGNITO_USER_POOLS",
+    "IdentitySource": "method.request.header.Authorization",
+    "ProviderARNs": [
+     {
+      "Fn::GetAtt": [
+       "SpaceUserPool6AB542DC",
+       "Arn"
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "Space-finder/SpaceAuthorizer/Resource"
    }
   },
   "helloLambdaServiceRoleBB046714": {
@@ -1471,7 +1572,7 @@
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/1WQS2/DIBCEf0vueJtHD706qXrrQ2nv1hpoim3A8kIjy/J/L2uaJj3tN6NlYNjC7gE2KzxTIVVbdKaG6T2gbEWyqgl7c8KgzzjCdNQUyt6Iw6e7wVJKH10Qj7rv/Gh1wuTeqJR20uxlSEd9HKTeI13Fb2bmZx2+vGIr0ywM2nS97/IezzffGTmyzDSLDm2tECa29GANkfGOF56ik4H5ArNQo0PrVar6gXVOXeCSUjmvdEPwsoy/ANpVSKQDQckjadhH2erAXWZOeY2hj+Faa9nj3sad/nVMfPBOmfwevg4auvve3MN2DetVQ8YUQ/pWYzUc8/wBENamH6oBAAA="
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/1WRS3ODMAyEf0vu4ObRQ68knd7aZtL2zDi2SpUYi0F2M5Thv9fGIY+Tvt2BRVqWYvUkFjN54lzpY25wL/oPJ9UxC1bZywYr6eAkO9HvgF3RYLb5tjdYKEXeuuwZGkNdDQGDe6NCWgXRSxBeJd8qWEu+inNm4ldwP6SjNRFVFh19MbRbIsOFD3aLf9COC1zUkKGsw55kUmCcWzKouigTDZmR9V5L0UcL2hqZkWx84MVb5SJPMGS6s7ImHTr5lPuUOsKUUlrScGDxNo5LAK9KyQyORRFH0GLt1RHceLRK54h+OijGXniCjcFzl/fOMETv3bvGu2t/43diwWiruzIDb8hqTPfEdcWBH34Xj2I5F/PZgRHzNvw/rEHs0vwHNj56lRMCAAA="
    },
    "Metadata": {
     "aws:cdk:path": "Space-finder/CDKMetadata/Default"
@@ -1504,6 +1605,16 @@
       "/"
      ]
     ]
+   }
+  },
+  "UserPoolId": {
+   "Value": {
+    "Ref": "SpaceUserPool6AB542DC"
+   }
+  },
+  "SpaceUserPoolclient": {
+   "Value": {
+    "Ref": "SpaceUserPoolSpaceUserPoolclient4839E5E8"
    }
   }
  },
